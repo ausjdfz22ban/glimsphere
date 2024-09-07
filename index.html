@@ -8,7 +8,7 @@
 	<style>
 		html,
 		body {
-			background: #000;
+			background: #eee7d7;
 			width: 100%;
 			height: 100%;
 			overflow: visible;
@@ -42,7 +42,7 @@
 
 <body>
 	<div id="gameContainer">
-		<canvas id="unity-canvas" data-pixel-art=""></canvas>
+		<canvas id="unity-canvas" data-pixel-art="false"></canvas>
 		<script src="Build/web.loader.js"></script>
 		<script>
 			var canvas = document.querySelector("#unity-canvas");
@@ -57,7 +57,7 @@
 			};
 			var scaleToFit;
 			try {
-				scaleToFit = !!JSON.parse("");
+				scaleToFit = !!JSON.parse("false");
 			} catch (e) {
 				scaleToFit = true;
 			}
@@ -75,15 +75,15 @@
 					w = window.innerWidth;
 					h = window.innerHeight;
 
-					var r = 1920 / 1080;
+					var r = 1080 / 1920;
 
 					if (w * r > window.innerHeight) {
 						w = Math.min(w, Math.ceil(h / r));
 					}
 					h = Math.floor(w * r);
 				} else {
-					w = 1080;
-					h = 1920;
+					w = 1920;
+					h = 1080;
 				}
 
 				container.style.width = canvas.style.width = w + "px";
