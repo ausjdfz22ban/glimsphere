@@ -1,132 +1,73 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | GlimSphere3D Visualizer</title>
-    <style>
-      /* Make the canvas fill the entire screen */
-      html, body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        height: 100%;
-      }
-      #unity-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background: #cccccc;
-      }
-      canvas {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Player | GlimSphere3D_Visualiser</title>
+  <style>
+    /* Ensure the body and html take up the full viewport size */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+    /* Style the canvas to take up the full viewport */
+    #unity-canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+    /* Style for the logo */
+    #logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px; /* Adjust as needed */
+      height: auto;
+      opacity: 1;
+      transition: opacity 2s ease-out; /* Fade-out effect */
+      z-index: 10; /* Ensure it appears above the canvas */
+    }
+  </style>
+</head>
+<body>
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+  <img id="logo" src="Build/Logo.png" alt="Logo">
+  <script src="Build/web.loader.js"></script>
+  <script>
+    // Check if the device is mobile
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      var meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+      document.getElementsByTagName('head')[0].appendChild(meta);
 
-      /* Center the logo and loading bar */
-      #loading-section {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-      }
+      var canvas = document.querySelector("#unity-canvas");
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.style.position = "fixed";
+    }
 
-      /* Logo styles */
-      #logo-container img {
-        max-width: 300px;
-      }
-
-      /* Loading bar styles */
-      #loading-bar-container {
-        width: 50%;
-        height: 20px;
-        background: #555;
-        border-radius: 10px;
-        overflow: hidden;
-        margin: 20px auto; /* Add margin to space the bar from the logo */
-      }
-
-      #loading-bar {
-        width: 0%;
-        height: 100%;
-        background: #3427e9;
-      }
-
-      /* Message under the loading bar */
-      #loading-message {
-        font-size: 30px;  /* Bigger font size */
-        font-weight: bold; /* Thicker font */
-        color: #333;
-        margin-top: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="unity-container">
-      <div id="loading-section">
-        <!-- Logo -->
-        <div id="logo-container">
-          <img src="Build/Logo.png" alt="Logo">
-        </div>
-
-        <!-- Loading bar -->
-        <div id="loading-bar-container">
-          <div id="loading-bar"></div>
-        </div>
-
-        <!-- Loading message -->
-        <div id="loading-message">
-          Please close any other applications if the page fails to load.
-        </div>
-      </div>
-
-      <canvas id="unity-canvas" tabindex="-1"></canvas>
-    </div>
-
-    <script src="Build/web.loader.js"></script>
-    <script>
-      function resizeCanvas() {
-        var canvas = document.querySelector("#unity-canvas");
-        canvas.style.width = window.innerWidth + "px";
-        canvas.style.height = window.innerHeight + "px";
-      }
-
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas();
-
-      // Unity loading function
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/web.data.unityweb",
-        frameworkUrl: "Build/web.framework.js.unityweb",
-        codeUrl: "Build/web.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "GlimSphere",
-        productName: "GlimSphere3D Visualizer",
-        productVersion: "1.0",
-      }).then(function (unityInstance) {
-        // Hide the loading elements once Unity is loaded
-        document.getElementById("loading-section").style.display = 'none';
-      }).catch(function (message) {
-        alert(message);
-      });
-
-      // Simulate loading progress
-      function updateLoadingBar(progress) {
-        var loadingBar = document.getElementById("loading-bar");
-        loadingBar.style.width = (progress * 100) + '%';
-      }
-
-      // Example of how to manually update the loading bar
-      var loadProgress = 0;
-      var loadingInterval = setInterval(function () {
-        loadProgress += 0.05;
-        updateLoadingBar(loadProgress);
-        if (loadProgress >= 1) {
-          clearInterval(loadingInterval);
-        }
-      }, 100); // Simulated progress update every 100ms
-    </script>
-  </body>
+    // Create Unity instance
+    createUnityInstance(document.querySelector("#unity-canvas"), {
+      dataUrl: "Build/web.data.unityweb",
+      frameworkUrl: "Build/web.framework.js.unityweb",
+      codeUrl: "Build/web.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "GlimSphere3D",
+      productName: "GlimSphere3D_Visualiser",
+      productVersion: "1.0",
+      matchWebGLToCanvasSize: true, // Ensure this is true to match WebGL canvas size with the DOM element
+      // devicePixelRatio: window.devicePixelRatio // Optional: Override DPI scaling
+    }).then(() => {
+      // Once Unity is fully loaded and ready, fade out the logo
+      document.getElementById('logo').style.opacity = '0';
+    }).catch((message) => {
+      console.error('Error creating Unity instance:', message);
+    });
+  </script>
+</body>
 </html>
